@@ -1,12 +1,8 @@
 import React, { useState, useEffect } from 'react';
 
-// ReactRouter
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
-
 // Socket.io
 import io from 'socket.io-client';
 const socket = io();
-const SOCKET_SERVER_URL = 'http://localhost:3001';
 
 // プレイヤー参加用QR
 // const FRONTEND_BASE_URL = 'http://localhost:5173'; // QRコード画像で固定URLを使用するため不要になる可能性

@@ -3,7 +3,7 @@ import SpeechRecognition, { useSpeechRecognition } from 'react-speech-recognitio
 import { useDeviceMotion } from '../../hooks/useDeviceMotion';
 import './VoiceMotionPopup.css';
 
-const VoiceMotionPopup = ({ handleClose }) => {
+const VoiceMotionPopup = ({ handleSend }) => {
  // 'idle': 待機中, 'recording': 録音中, 'recognized': 認識完了, 'motion_detecting': モーション検出中
   const [mode, setMode] = useState('idle');
   const [recognizedText, setRecognizedText] = useState('');
@@ -68,7 +68,6 @@ const VoiceMotionPopup = ({ handleClose }) => {
     return (
       <div className="popup-box">
         <div className="box">
-          <span className="close-icon" onClick={handleClose}>x</span>
           <p>お使いのブラウザは音声認識をサポートしていません。</p>
         </div>
       </div>
@@ -85,6 +84,9 @@ const VoiceMotionPopup = ({ handleClose }) => {
       case 'motion_detecting':
         return `センサー: ${motionHookStatus} | モーション: ${motionStatus}`;
       case 'end':
+        console.log(`質問内容: ${recognizedText}`);
+        
+        handleSend("ask_question",recognizedText );
         return `質問が投げられました！`
       case 'idle':
       default:
@@ -95,7 +97,6 @@ const VoiceMotionPopup = ({ handleClose }) => {
   return (
     <div className="popup-box">
       <div className="box">
-        <span className="close-icon" onClick={handleClose}>x</span>
         <h2>音声・モーション入力</h2>
         
         <div className="status-display">

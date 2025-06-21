@@ -149,7 +149,6 @@ export const useDeviceMotion = () => {
     };
   }, [handleMotion]); // handleMotion が変わった時（初回マウント時のみ）に実行
 
-  // ★変更: 戻り値に isDetecting と stopMotionDetection を追加
   return {
     status,
     motionStatus,
