@@ -6,7 +6,6 @@ import PlayerPage from './pages/PlayerPage.jsx';
 import './index.css';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
-  <React.StrictMode>
     <Router>
       <Routes>
         <Route path="/" element={<App />} /> {/* 初期画面 (ホスト機能もここで提供) */}
@@ -14,5 +13,4 @@ ReactDOM.createRoot(document.getElementById('root')).render(
         {/* 必要に応じて、NotFoundページやエラーページも追加 */}
       </Routes>
     </Router>
-  </React.StrictMode>,
 );

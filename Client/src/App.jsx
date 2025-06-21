@@ -1,16 +1,25 @@
 import React, { useState, useEffect } from 'react';
-// import QRCode from 'react-qr-code'; // ★削除
+
+// ReactRouter
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+
+// Socket.io
 import io from 'socket.io-client';
-import GamePlaying from './components/GamePlaying';
-
-import './App.css';
-
+const socket = io();
 const SOCKET_SERVER_URL = 'http://localhost:3001';
-// const FRONTEND_BASE_URL = 'http://localhost:5173'; // QRコード画像で固定URLを使用するため不要になる可能性
 
+// プレイヤー参加用QR
+// const FRONTEND_BASE_URL = 'http://localhost:5173'; // QRコード画像で固定URLを使用するため不要になる可能性
 // ★追加: 固定QRコード画像のパス
 // publicフォルダ直下にqr_code.pngを置くことを想定
-const STATIC_QR_CODE_IMAGE_PATH = '/qr_code.png'; 
+// const STATIC_QR_CODE_IMAGE_PATH = '/qr_code.png'; 
+
+// 他components
+import GamePlaying from './components/GamePlaying';
+// import VoiceMotionPopup from './components/Player/PopUp/VoiceMotionPopup';
+
+// CSS
+import './App.css';
 
 function App() {
   const [hostId, setHostId] = useState(null); // ゲームセッション管理のため、hostIdはバックエンドから取得し続ける
@@ -21,9 +30,6 @@ function App() {
   const [timer, setTimer] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [isGameOver, setIsGameOver] = useState(false);
-
-  // playerAccessUrlはQRコード画像で置き換えられるため、UIには表示しない
-  // const playerAccessUrl = hostId ? `${FRONTEND_BASE_URL}/player?hostId=${hostId}` : '';
 
   useEffect(() => {
     if (!hostId && !isLoading) {
@@ -142,6 +148,7 @@ function App() {
     <div className="app-container">
       <h1>キャッチボールアプリ</h1>
 
+
       {isLoading ? (
         <div className="loading-spinner">
           <p>ホストセッション準備中...<br/>（QRコード画像を読み込み中）</p>
@@ -202,6 +209,7 @@ function App() {
         </>
       )}
     </div>
+
   );
 }
 
