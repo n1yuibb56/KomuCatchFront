@@ -1,19 +1,19 @@
 import React, { useState, useEffect } from 'react';
-// import QRCode from 'react-qr-code'; // ★削除
-import io from 'socket.io-client';
+// import QRCode from 'react-qr-code';
+import io from 'socket.io-client'; // ioをインポート
 import GamePlaying from './components/GamePlaying';
 
 import './App.css';
 
 const SOCKET_SERVER_URL = 'http://localhost:3001';
-// const FRONTEND_BASE_URL = 'http://localhost:5173'; // QRコード画像で固定URLを使用するため不要になる可能性
+const STATIC_QR_CODE_IMAGE_PATH = '/qr_code.png';
 
-// ★追加: 固定QRコード画像のパス
-// publicフォルダ直下にqr_code.pngを置くことを想定
-const STATIC_QR_CODE_IMAGE_PATH = '/qr_code.png'; 
+// socket変数をuseEffectの外で定義し、nullで初期化
+// これにより、useEffect内外から同じインスタンスを参照できるようになります
+let socket = null; 
 
 function App() {
-  const [hostId, setHostId] = useState(null); // ゲームセッション管理のため、hostIdはバックエンドから取得し続ける
+  const [hostId, setHostId] = useState(null);
   const [players, setPlayers] = useState([]);
   const [playerReactions, setPlayerReactions] = useState({});
   const [gameState, setGameState] = useState('waiting');
@@ -22,16 +22,29 @@ function App() {
   const [isLoading, setIsLoading] = useState(true);
   const [isGameOver, setIsGameOver] = useState(false);
 
-  // playerAccessUrlはQRコード画像で置き換えられるため、UIには表示しない
-  // const playerAccessUrl = hostId ? `${FRONTEND_BASE_URL}/player?hostId=${hostId}` : '';
+  const playerAccessUrl = hostId ? `${FRONTEND_BASE_URL}/player?hostId=${hostId}` : '';
 
   useEffect(() => {
+    // Socket.IOインスタンスがまだ作成されていない場合のみ作成
+    if (!socket) {
+      socket = io(SOCKET_SERVER_URL);
+      console.log("Socket.IO instance created.");
+    }
+
+    // hostIdがnullでisLoading中でない場合に新しいセッション作成を試みる
     if (!hostId && !isLoading) {
         setIsLoading(true);
-        socket.disconnect();
-        socket.connect();
+        // socket.disconnect()とsocket.connect()は、既存のsocketインスタンスに対して行う
+        // useEffectの依存配列[hostId, isLoading]により、hostIdがnullになったときに再実行される
+        if (socket.connected) { // 既に接続済みの場合は切断しない
+            socket.disconnect();
+            console.log("Socket disconnected for new session.");
+        }
+        socket.connect(); // 新しいセッションのために接続
+        console.log("Socket attempting to connect for new session.");
         socket.emit('createHostSession');
     }
+
 
     socket.on('hostSessionCreated', (id) => {
       setHostId(id);
@@ -110,7 +123,9 @@ function App() {
       });
     });
 
+    // クリーンアップ関数
     return () => {
+      // コンポーネントがアンマウントされるときに、リスナーをすべてオフにする
       socket.off('hostSessionCreated');
       socket.off('playerJoined');
       socket.off('gameStarted');
@@ -120,21 +135,38 @@ function App() {
       socket.off('playerScoresUpdate');
       socket.off('playerReaction');
       socket.off('playerLeft');
+      // ここでsocket.disconnect()は呼ばない（他のコンポーネントでも使う可能性、または再利用のため）
+      // もしアプリ全体でSocket.IO接続を1つだけに厳密にしたいなら、メインのuseEffectから行う
     };
-  }, [hostId, isLoading]);
+  }, [hostId, isLoading]); // hostIdとisLoadingが変更された時に再実行
 
   const handleStartGame = () => {
-    socket.emit('startGame', hostId);
+    // socketが定義されていることを確認
+    if (socket) {
+      socket.emit('startGame', hostId);
+    } else {
+      console.error("Socket is not initialized.");
+    }
   };
 
   const handlePlayBall = () => {
+    // socketが定義されていることを確認
+    if (socket) {
       console.log('Host clicked Play Ball!');
       socket.emit('hostPlayBall', hostId);
+    } else {
+      console.error("Socket is not initialized.");
+    }
   };
 
   const handlePlayAgain = () => {
+    // socketが定義されていることを確認
+    if (socket) {
       console.log('Host clicked Play Again. Requesting session reset...');
       socket.emit('resetSessionAndCreateNewHost', hostId);
+    } else {
+      console.error("Socket is not initialized.");
+    }
   };
 
 
@@ -156,12 +188,8 @@ function App() {
                 <>
                   <p>プレイヤーは以下のQRコードをスキャンして参加してください。</p>
                   <div style={{ background: 'white', padding: '16px', margin: '20px auto', width: 'fit-content' }}>
-                    {/* ★QRコードコンポーネントを削除し、imgタグに変更 */}
                     <img src={STATIC_QR_CODE_IMAGE_PATH} alt="Player Join QR Code" style={{ width: 256, height: 256 }} />
                   </div>
-                  {/* 固定URLの直接入力ガイドは不要になる場合が多いが、残すことも可能 */}
-                  {/* <p>または、このURLを直接入力してください:</p>
-                  <p><strong>{FRONTEND_BASE_URL}/player?hostId=<固定ID></strong></p> */}
 
                   <h2>参加中のプレイヤー ({players.length}人):</h2>
                   {players.length > 0 ? (
