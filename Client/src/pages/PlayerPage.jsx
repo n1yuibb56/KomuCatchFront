@@ -17,6 +17,7 @@ function PlayerPage() {
   const [playerId, setPlayerId] = useState(null);
 
   const [playerRole, setPlayerRole] = useState("waiter");
+  const [isSendQuestion, setIsSendQuestion] = useState(false);
 
   const [isConnected, setIsConnected] = useState(false);
   const [gameStarted, setGameStarted] = useState(false);
@@ -78,6 +79,11 @@ function PlayerPage() {
       // setCurrentTimer(initialData.timer);
     });
 
+    socketInstance.on("new question", (question) => {
+      console.log("New Question Received:", question);
+      setBackendMessage(question.text);
+    });
+
     socketInstance.on("gameTimerUpdate", (newTime) => {
       setCurrentTimer(newTime);
     });
@@ -127,7 +133,7 @@ function PlayerPage() {
         `Questioner decided: Player ${questionerID}. This decision is for player ${playerId}`
       );
 
-      const newRole = questionerID === playerId - 1 ? "questioner" : "waiter";
+      const newRole = questionerID === playerId ? "questioner" : "waiter";
       setPlayerRole(newRole);
       // 正しい方法でロール名をログに出力
       console.log(`Player ${playerId} is assigned role: ${newRole}`);
@@ -143,15 +149,14 @@ function PlayerPage() {
   }, [playerId]);
 
   // --- Action Handlers ---
-  const handlePlayerAction = (actionType,msg) => {
+  const handlePlayerAction = (actionType, msg) => {
     console.log(`Player ${playerId} performing action: ${actionType}`, msg);
-    
+
     switch (actionType) {
       case "ask_question":
-        if (
-          playerRole === "questioner"
-        ) {
-          socketRef.current.emit("send question",msg);
+        if (playerRole === "questioner") {
+          setIsSendQuestion(true);
+          socketRef.current.emit("send question", msg);
         } else {
           console.warn("Player is not allowed to ask questions.");
         }
@@ -195,7 +200,9 @@ function PlayerPage() {
                 <button onClick={handleExtendGame} className="extend-button">
                   延長 (+1秒)
                 </button>
-                {playerRole === "questioner" ? <VoiceMotionPopup handleSend={handlePlayerAction}/> : null}
+                {playerRole === "questioner" && !isSendQuestion ? (
+                  <VoiceMotionPopup handleSend={handlePlayerAction} />
+                ) : null}
               </>
             ) : (
               <p>ゲーム開始を待っています...</p>
