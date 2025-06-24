@@ -4,6 +4,7 @@ import io from "socket.io-client";
 import PlayerControls from "../components/PlayerControls";
 import { serverURL } from "../config/serverConfig";
 import VoiceMotionPopup from "../components/Player/PopUp/VoiceMotionPopup";
+import CatchPopupComponent from "../components/Player/PopUp/CatchPopupComponent";
 
 const SOCKET_SERVER_URL = serverURL;
 
@@ -16,13 +17,17 @@ function PlayerPage() {
   const [hostId, setHostId] = useState(initialHostId);
   const [playerId, setPlayerId] = useState(null);
 
-  const [playerRole, setPlayerRole] = useState("waiter");
+  const [playerRole, setPlayerRole] = useState("waiter"); // "waiter" | "questioner" | "answerer"
   const [isSendQuestion, setIsSendQuestion] = useState(false);
+  const [isAnswering, setIsAnswering] = useState(false);
 
   const [isConnected, setIsConnected] = useState(false);
   const [gameStarted, setGameStarted] = useState(false);
   const [myScore, setMyScore] = useState(0);
   const [myRank, setMyRank] = useState(0);
+
+  const [timeLeft, setTimeLeft] = useState(0);
+  const [ansTimer, setAnsTimer] = useState(0);
 
   const [currentTimer, setCurrentTimer] = useState(0);
   const [backendMessage, setBackendMessage] = useState("");
@@ -82,6 +87,13 @@ function PlayerPage() {
     socketInstance.on("new question", (question) => {
       console.log("New Question Received:", question);
       setBackendMessage(question.text);
+    });
+
+    socketInstance.on("timer_update", (data) => {
+      console.log(data);
+      setTimeLeft(data.timeLeft);
+      setAnsTimer(data.ansTimer);
+      console.log("Game State Updated:", data , playerId);
     });
 
     socketInstance.on("gameTimerUpdate", (newTime) => {
@@ -161,8 +173,21 @@ function PlayerPage() {
           console.warn("Player is not allowed to ask questions.");
         }
         break;
+      case "ans_question":
+        if (playerRole === "waiter") {
+          if (playerRole === "waiter") {
+            setPlayerRole("answerer");
+            setIsAnswering(true);
+          }
+        }
+        break;
     }
   };
+
+  const handleAns = () => {
+    setIsAnswering(false);
+    socketRef.current.emit("send answer",{userNumber: playerId, answer: "demo-answer"});
+  }
 
   const handleExtendGame = () => {
     if (socketRef.current && isConnected && playerId && gameStarted && hostId) {
@@ -179,8 +204,15 @@ function PlayerPage() {
     <div className="player-page">
       <h1>プレイヤー画面</h1>
       <>
+        <p>回答待ち制限時間：{ansTimer}</p>
+        <p>深掘りタイム：{timeLeft}</p>
         <p>ホストID: {hostId || "N/A"}</p>
         <p>プレイヤーの役割: {playerRole}</p>
+
+        {playerRole == "answerer" && isAnswering ? (
+          <CatchPopupComponent handleSend={handleAns}/>
+        ) : null}
+
         {playerId ? (
           <div>
             <p>あなたのプレイヤー番号: {playerId}</p>
