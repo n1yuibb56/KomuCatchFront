@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="_レイヤー_2" data-name="レイヤー 2" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 1504.76 1246.74">
+  <defs>
+    <style>
+      .cls-1, .cls-2, .cls-3 {
+        fill: none;
+      }
+
+      .cls-4 {
+        filter: url(#drop-shadow-1);
+      }
+
+      .cls-5 {
+        fill: #46320b;
+      }
+
+      .cls-6 {
+        fill: #ffdf37;
+      }
+
+      .cls-7 {
+        fill: #fff;
+      }
+
+      .cls-2 {
+        filter: url(#drop-shadow-2);
+        stroke: #ffdf37;
+        stroke-width: 12.05px;
+      }
+
+      .cls-2, .cls-3 {
+        stroke-miterlimit: 10;
+      }
+
+      .cls-3 {
+        stroke: #46320b;
+        stroke-linecap: round;
+        stroke-width: 40px;
+      }
+
+      .cls-8 {
+        fill: #71d0ff;
+      }
+
+      .cls-9 {
+        clip-path: url(#clippath);
+      }
+    </style>
+    <filter id="drop-shadow-1" x="-66.36" y="-193.39" width="1634" height="1669" filterUnits="userSpaceOnUse">
+      <feOffset dx="0" dy="65"/>
+      <feGaussianBlur result="blur" stdDeviation="0"/>
+      <feFlood flood-color="#000" flood-opacity=".5"/>
+      <feComposite in2="blur" operator="in"/>
+      <feComposite in="SourceGraphic"/>
+    </filter>
+    <clipPath id="clippath">
+      <circle class="cls-1" cx="750.73" cy="623.37" r="623.37"/>
+    </clipPath>
+    <filter id="drop-shadow-2" x="-66.36" y="-193.39" width="1634" height="1634" filterUnits="userSpaceOnUse">
+      <feOffset dx="0" dy="0"/>
+      <feGaussianBlur result="blur-2" stdDeviation="60.25"/>
+      <feFlood flood-color="#000" flood-opacity="1"/>
+      <feComposite in2="blur-2" operator="in"/>
+      <feComposite in="SourceGraphic"/>
+    </filter>
+  </defs>
+  <g id="_にこり輪郭" data-name="にこり輪郭">
+    <g class="cls-4">
+      <circle class="cls-6" cx="750.73" cy="623.37" r="623.37"/>
+      <g class="cls-9">
+        <circle class="cls-2" cx="750.73" cy="623.37" r="623.37"/>
+      </g>
+    </g>
+  </g>
+  <g id="_にこり目" data-name="にこり目">
+    <path class="cls-3" d="M370.41,307.35s156.59,16.21,259.2,94.93c4.42,3.39,2.97,10.39-2.44,11.72-52.09,12.76-220.97,69.34-272.7,107.37"/>
+    <path class="cls-3" d="M1114.35,302.18s-155.26,26-252.74,110.99c-4.2,3.66-2.32,10.56,3.17,11.54,52.78,9.47,224.89,55.35,278.9,90.06"/>
+  </g>
+  <g id="_にこり口" data-name="にこり口">
+    <g>
+      <path class="cls-5" d="M254.3,608.08c98.26,31.18,523.22,148.53,993.28,16.09,8.68-2.44,17.04,4.78,15.9,13.72-12,93.8-84.48,439.92-475.59,439.66-386.89-.25-522.71-349.4-549.61-454.34-2.46-9.58,6.59-18.12,16.02-15.13Z"/>
+      <path class="cls-7" d="M357.81,707.08c98.97,18.81,459.08,76.96,785.05-1.06,8.96-2.14,15.9,7.77,10.83,15.46-35.14,53.27-148.47,187.27-394.49,176.92-241.22-10.15-367.72-126.13-410.66-175.07-6.21-7.08.02-18.01,9.27-16.25Z"/>
+    </g>
+  </g>
+  <g id="_涙左" data-name="涙左">
+    <path class="cls-8" d="M386.61,417.28c.97-9.31-8.12-16.43-16.93-13.27-98.28,35.29-539.94,208.79-298.38,398.12,241.55,189.33,304.52-280.98,315.31-384.85Z"/>
+  </g>
+  <g id="_涙右" data-name="涙右">
+    <path class="cls-8" d="M1141.57,394.03c-8.73-3.36-17.98,3.55-17.23,12.88,8.42,104.09,60.68,575.71,306.47,391.92,245.8-183.79-191.79-367.28-289.25-404.8Z"/>
+  </g>
+</svg>
