@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="_レイヤー_2" data-name="レイヤー 2" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 1112.64 1112.64">
+  <defs>
+    <style>
+      .cls-1, .cls-2 {
+        fill: none;
+      }
+
+      .cls-3 {
+        filter: url(#drop-shadow-1);
+      }
+
+      .cls-4 {
+        fill: #46320b;
+      }
+
+      .cls-5 {
+        fill: #ebd550;
+      }
+
+      .cls-2 {
+        filter: url(#drop-shadow-2);
+        stroke: #ebd550;
+        stroke-miterlimit: 10;
+        stroke-width: 10.75px;
+      }
+
+      .cls-6 {
+        clip-path: url(#clippath);
+      }
+
+      .cls-7 {
+        fill: url(#_名称未設定グラデーション_56);
+      }
+    </style>
+    <filter id="drop-shadow-1" x="-135.06" y="-135.06" width="1383" height="1429" filterUnits="userSpaceOnUse">
+      <feOffset dx="0" dy="65"/>
+      <feGaussianBlur result="blur" stdDeviation="0"/>
+      <feFlood flood-color="#000" flood-opacity=".5"/>
+      <feComposite in2="blur" operator="in"/>
+      <feComposite in="SourceGraphic"/>
+    </filter>
+    <clipPath id="clippath">
+      <circle class="cls-1" cx="556.32" cy="556.32" r="556.32"/>
+    </clipPath>
+    <filter id="drop-shadow-2" x="-135.06" y="-135.06" width="1383" height="1383" filterUnits="userSpaceOnUse">
+      <feOffset dx="0" dy="0"/>
+      <feGaussianBlur result="blur-2" stdDeviation="41.13"/>
+      <feFlood flood-color="#090000" flood-opacity="1"/>
+      <feComposite in2="blur-2" operator="in"/>
+      <feComposite in="SourceGraphic"/>
+    </filter>
+    <linearGradient id="_名称未設定グラデーション_56" data-name="名称未設定グラデーション 56" x1="556.32" y1="1090.37" x2="556.32" y2="-15.55" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#ffdf37" stop-opacity="0"/>
+      <stop offset="1" stop-color="#d40000"/>
+    </linearGradient>
+  </defs>
+  <g id="_怒り輪郭" data-name="怒り輪郭">
+    <g class="cls-3">
+      <circle class="cls-5" cx="556.32" cy="556.32" r="556.32"/>
+      <g class="cls-6">
+        <circle class="cls-2" cx="556.32" cy="556.32" r="556.32"/>
+      </g>
+    </g>
+  </g>
+  <g id="_グラデーション" data-name="グラデーション">
+    <circle class="cls-7" cx="556.32" cy="556.32" r="552.96"/>
+  </g>
+  <g id="_眉毛" data-name="眉毛">
+    <g>
+      <path class="cls-4" d="M696.94,233.48l158.6-90.63s-97.78-9.54-158.6,90.63Z"/>
+      <path class="cls-4" d="M288.51,142.85s97.78-9.54,158.6,90.63l-158.6-90.63"/>
+    </g>
+  </g>
+  <g id="_怒り目" data-name="怒り目">
+    <g>
+      <circle class="cls-4" cx="379.53" cy="393.87" r="70.95"/>
+      <circle class="cls-4" cx="752.77" cy="401.02" r="70.95"/>
+    </g>
+  </g>
+  <g id="_怒り口" data-name="怒り口">
+    <ellipse class="cls-4" cx="563.64" cy="721.18" rx="225.87" ry="111.32"/>
+  </g>
+</svg>

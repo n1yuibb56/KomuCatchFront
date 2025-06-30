@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="_レイヤー_2" data-name="レイヤー 2" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 1436.48 1436.48">
+  <defs>
+    <style>
+      .cls-1, .cls-2, .cls-3 {
+        fill: none;
+      }
+
+      .cls-4 {
+        filter: url(#drop-shadow-1);
+      }
+
+      .cls-5 {
+        fill: #44321c;
+      }
+
+      .cls-6 {
+        fill: #fff;
+      }
+
+      .cls-2 {
+        stroke: #44321c;
+        stroke-linecap: round;
+        stroke-width: 81.31px;
+      }
+
+      .cls-2, .cls-3 {
+        stroke-miterlimit: 10;
+      }
+
+      .cls-7 {
+        fill: #ebd550;
+      }
+
+      .cls-8 {
+        clip-path: url(#clippath);
+      }
+
+      .cls-3 {
+        filter: url(#drop-shadow-2);
+        stroke: #ebd550;
+        stroke-width: 13.88px;
+      }
+    </style>
+    <filter id="drop-shadow-1" x="-174.05" y="-174.15" width="1785" height="1825" filterUnits="userSpaceOnUse">
+      <feOffset dx="0" dy="65"/>
+      <feGaussianBlur result="blur" stdDeviation="0"/>
+      <feFlood flood-color="#000" flood-opacity=".5"/>
+      <feComposite in2="blur" operator="in"/>
+      <feComposite in="SourceGraphic"/>
+    </filter>
+    <clipPath id="clippath">
+      <circle class="cls-1" cx="718.24" cy="718.24" r="718.24"/>
+    </clipPath>
+    <filter id="drop-shadow-2" x="-174.05" y="-174.15" width="1785" height="1785" filterUnits="userSpaceOnUse">
+      <feOffset dx="0" dy="0"/>
+      <feGaussianBlur result="blur-2" stdDeviation="53.1"/>
+      <feFlood flood-color="#090000" flood-opacity="1"/>
+      <feComposite in2="blur-2" operator="in"/>
+      <feComposite in="SourceGraphic"/>
+    </filter>
+  </defs>
+  <g id="_輪郭" data-name="輪郭">
+    <g class="cls-4">
+      <circle class="cls-7" cx="718.24" cy="718.24" r="718.24"/>
+      <g class="cls-8">
+        <circle class="cls-3" cx="718.24" cy="718.24" r="718.24"/>
+      </g>
+    </g>
+  </g>
+  <g id="_眉毛" data-name="眉毛">
+    <path class="cls-2" d="M535.37,240.24s-225.78,16.72-304.39,187.32"/>
+    <path class="cls-2" d="M912.54,240.24s225.78,16.72,304.39,187.32"/>
+  </g>
+  <g id="_目" data-name="目">
+    <ellipse class="cls-5" cx="963.07" cy="583.86" rx="90.04" ry="130.53"/>
+    <ellipse class="cls-5" cx="486.05" cy="583.86" rx="90.04" ry="130.53"/>
+  </g>
+  <g id="_口" data-name="口">
+    <ellipse class="cls-5" cx="718.24" cy="1070.47" rx="179.41" ry="237.91"/>
+    <path class="cls-6" d="M598.23,1077.66h244.33s-4.31-160.9-124.32-160.9-120.01,160.9-120.01,160.9Z"/>
+  </g>
+</svg>
