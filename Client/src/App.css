@@ -1,92 +1,85 @@
-/* src/App.css に追加 */
-
-.player-controls {
+.app-container {
   display: flex;
-  flex-direction: column; /* 縦並び */
-  gap: 15px; /* ボタン間のスペース */
-  align-items: center; /* 中央揃え */
-  margin-top: 20px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start; /* 上部に寄せる */
+  min-height: 100vh; /* 画面いっぱいに広げる */
+  background-color: #f0f0f0; /* 背景色 */
+  padding: 20px;
+  box-sizing: border-box;
 }
 
-.action-button {
-  padding: 15px 30px;
-  font-size: 1.5em;
-  border-radius: 30px;
-  border: 2px solid #3498db;
-  background-color: #f0f8ff;
-  color: #3498db;
-  cursor: pointer;
-  transition: background-color 0.3s, color 0.3s;
-  width: 80%; /* 幅を調整 */
-  max-width: 300px;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-}
-
-.action-button:hover {
-  background-color: #3498db;
-  color: white;
-}
-
-.question-button {
-  /* 質問ボタン固有のスタイル */
-  background-color: #ffcc00; /* 黄色系 */
-  border-color: #e6b800;
-  color: #333;
-}
-.question-button:hover {
-    background-color: #e6b800;
-    color: white;
-}
-
-.reaction-buttons {
+.player-cards-container {
   display: flex;
-  justify-content: center;
-  gap: 10px;
-  margin-top: 20px;
-  flex-wrap: wrap;
+  justify-content: space-around;
+  width: 100%;
+  max-width: 1000px; /* 適度な幅に制限 */
+  margin-bottom: 40px; /* メインコンテンツとの間にスペース */
 }
 
-.reaction-button {
-  padding: 10px 15px;
-  font-size: 1.8em; /* 絵文字が大きく見えるように */
-  border-radius: 50px;
-  border: 1px solid #ddd;
-  background-color: #eee;
-  cursor: pointer;
-  transition: transform 0.1s ease-in-out;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
-
-.reaction-button:active {
-  transform: scale(0.95);
-}
-
-.backend-message-box {
-  border: 2px solid #a0a0a0;
-  border-radius: 10px;
-  padding: 15px;
-  margin-top: 30px;
-  background-color: #e0ffe0; /* 薄い緑色 */
-  text-align: center;
-  font-size: 1.2em;
-  color: #333;
-  min-height: 80px; /* ある程度の高さを確保 */
+.main-content {
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  box-shadow: inset 0 1px 3px rgba(0,0,0,0.2);
+  flex-grow: 1; /* 残りのスペースを埋める */
+  width: 100%;
 }
 
-.extend-button {
+.stage-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 20px;
+}
+
+/* Case 1 */
+.stage-1 .qr-code {
+  width: 200px;
+  height: 200px;
+  margin: 20px 0;
+}
+
+/* Case 2 */
+.stage-2 .play-ball-button {
+  padding: 20px 40px;
+  font-size: 2em;
+  cursor: pointer;
+}
+
+/* Case 3 */
+.stage-3 .game-info {
+  margin-top: 20px;
+  font-size: 1.5em;
+}
+
+/* Case 4 */
+.stage-4 .best-question-container {
+  position: relative;
+  margin-bottom: 20px;
+}
+
+.stage-4 .best-question-image {
+  width: 300px; /* 画像サイズ調整 */
+  height: auto;
+}
+
+.stage-4 .best-question-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: black; /* テキスト色 */
+  font-size: 1.2em;
+  text-align: center;
+  width: 80%;
+}
+
+.next-button, .restart-button {
   margin-top: 20px;
   padding: 10px 20px;
-  background-color: #28a745;
-  color: white;
-  border: none;
-  border-radius: 5px;
+  font-size: 1.2em;
   cursor: pointer;
-  font-size: 1em;
-}
-.extend-button:hover {
-    background-color: #218838;
 }
