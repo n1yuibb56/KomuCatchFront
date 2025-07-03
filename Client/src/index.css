@@ -1,5 +1,7 @@
+/* src/index.css */
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  /* ★★★ この行を 'DotGothic16' に変更 ★★★ */
+  font-family: 'DotGothic16', system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
 
@@ -41,6 +43,7 @@ button {
   padding: 0.6em 1.2em;
   font-size: 1em;
   font-weight: 500;
+  /* ★ ボタンにもフォントを適用 */
   font-family: inherit;
   background-color: #1a1a1a;
   cursor: pointer;

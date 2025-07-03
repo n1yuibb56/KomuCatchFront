@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="_レイヤー_2" data-name="レイヤー 2" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 424.37 146.64">
+  <defs>
+    <style>
+      .cls-1 {
+        filter: url(#drop-shadow-1);
+      }
+
+      .cls-2 {
+        fill: none;
+        stroke: #fff;
+        stroke-miterlimit: 10;
+        stroke-width: 2.59px;
+      }
+
+      .cls-3 {
+        fill: #fff;
+      }
+
+      .cls-4 {
+        fill: #fb9008;
+      }
+    </style>
+    <filter id="drop-shadow-1" x="-14" y="-13" width="438.37" height="159.64" filterUnits="userSpaceOnUse">
+      <feOffset dx="-14" dy="-13"/>
+      <feGaussianBlur result="blur" stdDeviation="0"/>
+      <feFlood flood-color="#000" flood-opacity=".4"/>
+      <feComposite in2="blur" operator="in"/>
+      <feComposite in="SourceGraphic"/>
+    </filter>
+  </defs>
+  <g id="_順位_4" data-name="順位_4">
+    <g class="cls-1">
+      <rect class="cls-4" width="424.37" height="146.64"/>
+      <rect class="cls-2" x="13.06" y="8.76" width="398.25" height="129.12"/>
+    </g>
+    <g>
+      <path class="cls-3" d="M145.31,92.31h5.58v-5.58h5.49v-11.16h5.31v-11.07h5.49v-11.16h5.49v-11.16h5.49v-5.49h6.3v55.62h5.49v6.48h-5.49v11.25h-6.3v-11.25h-32.85v-6.48ZM178.16,92.31v-37.98h-4.5v11.07h-5.49v11.16h-5.49v11.16h-5.49v4.59h20.97Z"/>
+      <path class="cls-3" d="M217.67,70.89h-4.59v11.16h-6.66v-12.15h5.67v-11.07h5.58v-11.16h5.49v-16.65h6.57v17.64h-5.58v66.87h-6.48v-44.64ZM228.74,103.29h33.39v-11.07h5.49v-16.74h5.58v-16.65h6.57v17.64h-5.58v16.65h-5.58v10.17h22.23v6.66h-62.1v-6.66ZM234.32,47.67h22.23v-16.65h6.48v16.65h22.23v6.57h-50.94v-6.57ZM245.39,76.47h-5.49v-12.06h6.48v11.07h5.58v23.22h-6.57v-22.23Z"/>
+    </g>
+  </g>
+</svg>
