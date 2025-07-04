@@ -1,219 +1,84 @@
-import React, { useState, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
-import { Html5QrcodeScanner } from 'html5-qrcode';
-import io from 'socket.io-client';
-import PlayerControls from '../components/PlayerControls';
+// src/pages/PlayerPage.jsx
 
-const SOCKET_SERVER_URL = 'http://localhost:3001';
+import React, { useState, useEffect, useRef } from 'react'; // ★ useRef をインポート
+import io from 'socket.io-client';
+import './PlayerPage.css';
+
+// バックエンドのURL
+const SOCKET_SERVER_URL = 'http://192.168.1.114:3001'; 
 
 function PlayerPage() {
-  const location = useLocation();
-  const queryParams = new URLSearchParams(location.search);
-  const initialHostId = queryParams.get('hostId');
-
-  const [hostId, setHostId] = useState(initialHostId);
-  const [playerId, setPlayerId] = useState(null);
   const [isConnected, setIsConnected] = useState(false);
-  const [gameStarted, setGameStarted] = useState(false);
-  const [myScore, setMyScore] = useState(0);
-  const [myRank, setMyRank] = useState(0);
-  const [currentTimer, setCurrentTimer] = useState(0);
-  const [backendMessage, setBackendMessage] = useState("");
+  const [hintText, setHintText] = useState("ネコ"); /* 仮 */ 
 
-  let qrCodeScanner = null;
-  let socketInstance;
+  // ★ socketインスタンスをuseRefで管理
+  const socketRef = useRef(null);
 
   useEffect(() => {
-    const cleanup = () => {
-        if (qrCodeScanner && qrCodeScanner.getState() === 2) {
-            qrCodeScanner.clear();
-        }
-        if (socketInstance) {
-            socketInstance.off('connect');
-            socketInstance.off('playerRegistered');
-            socketInstance.off('gameStarted');
-            socketInstance.off('gameTimerUpdate');
-            socketInstance.off('roundFinished');
-            socketInstance.off('gameFinished'); // ★追加
-            socketInstance.off('myScoreUpdate');
-            socketInstance.off('backendTextMessage');
-            socketInstance.off('connect_error');
-            socketInstance.off('disconnect');
-            socketInstance.disconnect();
-        }
+    // socketRef.currentにsocketインスタンスを格納
+    socketRef.current = io(SOCKET_SERVER_URL);
+
+    socketRef.current.on('connect', () => {
+      setIsConnected(true);
+      console.log('Player: Connected to Socket.IO server.');
+    });
+
+    socketRef.current.on('disconnect', () => {
+      setIsConnected(false);
+      console.log('Player: Disconnected from server.');
+    });
+
+    return () => {
+      socketRef.current.disconnect();
     };
+  }, []);
 
-    if (!hostId) {
-      qrCodeScanner = new Html5QrcodeScanner(
-        "qr-reader",
-        { fps: 10, qrbox: { width: 250, height: 250 } },
-        false
-      );
-      qrCodeScanner.render(onScanSuccess, onScanError);
+  // ★★★ リアクションボタンのアクションを修正 ★★★
+  const handleAction = (action) => {
+    console.log("Action:", action);
+    // socketが接続されていれば、リアクション情報をサーバーに送信
+    if (socketRef.current && action.startsWith('react_')) {
+      const reactionType = action.replace('react_', ''); // 'react_laugh' から 'laugh' を抽出
+      socketRef.current.emit('send_reaction', { reaction: reactionType });
+      console.log(`Sent reaction: ${reactionType}`);
     }
-
-    if (hostId && !isConnected) {
-      socketInstance = io(SOCKET_SERVER_URL);
-
-      socketInstance.on('connect', () => {
-        setIsConnected(true);
-        console.log('Connected to Socket.IO server as player.');
-        socketInstance.emit('joinHostSession', { hostId: hostId });
-      });
-
-      socketInstance.on('playerRegistered', (id) => {
-        setPlayerId(id);
-        console.log('Registered as Player ID:', id);
-        if (qrCodeScanner && qrCodeScanner.getState() === 2) {
-          qrCodeScanner.clear();
-        }
-      });
-
-      socketInstance.on('gameStarted', (initialData) => {
-        console.log('Game Started for player!');
-        setGameStarted(true);
-        setCurrentTimer(initialData.timer);
-      });
-
-      socketInstance.on('gameTimerUpdate', (newTime) => {
-        setCurrentTimer(newTime);
-      });
-
-      socketInstance.on('roundFinished', (nextRoundData) => {
-          console.log(`Round Finished! Next Round: ${nextRoundData.nextRound}`);
-          if (nextRoundData.nextRound > 3) {
-              // 全ラウンド終了後、ゲーム終了とみなし、プレイヤー画面をリセット
-              console.log("Player: All rounds finished. Resetting for next game.");
-              setGameStarted(false);
-              setHostId(null); // ホストIDをクリアし、QRスキャン画面に戻る
-              setPlayerId(null);
-              setIsConnected(false); // 接続もリセットされる
-              setMyScore(0);
-              setMyRank(0);
-              setCurrentTimer(0);
-              setBackendMessage("");
-          }
-      });
-
-      // ★追加: サーバーからの明示的なゲーム終了通知を受信した時
-      socketInstance.on('gameFinished', () => {
-        console.log("Player: Game Finished (explicit). Resetting for next game.");
-        setGameStarted(false);
-        setHostId(null);
-        setPlayerId(null);
-        setIsConnected(false);
-        setMyScore(0);
-        setMyRank(0);
-        setCurrentTimer(0);
-        setBackendMessage("");
-      });
-
-
-      socketInstance.on('myScoreUpdate', (data) => {
-        setMyScore(data.score);
-        setMyRank(data.rank);
-      });
-
-      socketInstance.on('backendTextMessage', (message) => {
-          console.log('Received message from backend:', message);
-          setBackendMessage(message);
-      });
-
-      socketInstance.on('connect_error', (error) => {
-        console.error('Player Socket.IO connection error:', error);
-        setIsConnected(false);
-        setHostId(null); // エラー時もリセットしてQR画面に戻る
-      });
-      socketInstance.on('disconnect', () => {
-        console.log('Player disconnected from Socket.IO server.');
-        setIsConnected(false);
-        setGameStarted(false);
-        setHostId(null); // ホストが切断された場合もリセット
-        setPlayerId(null);
-        setMyScore(0);
-        setMyRank(0);
-        setCurrentTimer(0);
-        setBackendMessage("");
-      });
-    }
-
-    return cleanup;
-  }, [hostId, isConnected]);
-
-  const onScanSuccess = (decodedText, decodedResult) => {
-    if (decodedText) {
-      console.log(`QR Code scanned: ${decodedText}`);
-      try {
-        const url = new URL(decodedText);
-        const scannedHostId = url.searchParams.get('hostId');
-        if (scannedHostId) {
-          setHostId(scannedHostId);
-        } else {
-          console.error("Scanned QR code does not contain 'hostId' parameter.");
-          alert("無効なQRコードです。hostIdが見つかりません。");
-        }
-      } catch (e) {
-        console.error("Failed to parse QR code as URL:", e);
-        alert("無効なQRコード形式です。");
-      }
-    }
-  };
-
-  const onScanError = (errorMessage) => {
-    // console.warn(`QR Code Scan Error: ${errorMessage}`);
-  };
-
-  const handlePlayerAction = (actionType) => {
-    if (isConnected && playerId && gameStarted && hostId && socketInstance) {
-      console.log(`Player ${playerId} sending action: ${actionType}`);
-      socketInstance.emit('playerAction', { playerId, hostId: hostId, action: actionType });
-    }
-  };
-
-  const handleExtendGame = () => {
-      if (isConnected && playerId && gameStarted && hostId && socketInstance) {
-          console.log(`Player ${playerId} requesting extension!`);
-          socketInstance.emit('extendGameTime', { playerId, hostId: hostId, seconds: 1 });
-      }
   };
 
   return (
-    <div className="player-page">
-      <h1>プレイヤー画面</h1>
-      {!hostId ? (
-        <div>
-          <p>ホストのQRコードをスキャンして参加してください。</p>
-          <div id="qr-reader" style={{ width: '100%', maxWidth: '400px', margin: 'auto' }}></div>
+    <div className="player-page-container">
+      <div className="player-game-screen" style={{ backgroundImage: `url('/Phone_background.svg')` }}>
+        
+        {/* 上部のボタンエリア */}
+        <div className="main-action-buttons">
+          {/* handleActionの呼び出しは変更なし */}
+          <button className="answer-button" onClick={() => handleAction('answer_question')}>
+            <img src="/Shitumon.svg" alt="質問に答える" />
+          </button>
+          <button className="curious-button" onClick={() => handleAction('curious')}>
+            <img src="/Kininaru.svg" alt="気になるボタン" />
+          </button>
         </div>
-      ) : (
-        <>
-          <p>ホストID: {hostId}</p>
-          {playerId ? (
-            <div>
-              <p>あなたのプレイヤー番号: {playerId}</p>
-              {gameStarted ? (
-                <>
-                  <p>現在の点数: {myScore}</p>
-                  <p>現在の順位: {myRank}位</p>
-                  <p>残り時間: {currentTimer}秒</p>
-                  <PlayerControls onAction={handlePlayerAction} />
-                  <div className="backend-message-box">
-                      {backendMessage && <p>{backendMessage}</p>}
-                      {!backendMessage && <p>ここにメッセージが表示されます</p>}
-                  </div>
-                  <button onClick={handleExtendGame} className="extend-button">
-                    延長 (+1秒)
-                  </button>
-                </>
-              ) : (
-                <p>ゲーム開始を待っています...</p>
-              )}
-            </div>
-          ) : (
-            <p>ホストへの接続中...</p>
-          )}
-        </>
-      )}
+
+        {/* リアクションエリア */}
+        <div className="reaction-area">
+          <div className="reaction-line-container">
+            <img src="/リアクションライン.svg" alt="リアクションライン" />
+          </div>
+          <div className="reaction-buttons">
+            <button onClick={() => handleAction('react_laugh')}><img src="/爆笑.svg" alt="爆笑" className="reaction-laugh" /></button>
+            <button onClick={() => handleAction('react_surprise')}><img src="/驚き.svg" alt="驚き" className="reaction-surprise" /></button>
+            <button onClick={() => handleAction('react_angry')}><img src="/怒り.svg" alt="怒り" className="reaction-angry" /></button>
+            <button onClick={() => handleAction('react_like')}><img src="/いいね.svg" alt="いいね" className="reaction-like" /></button>
+          </div>
+        </div>
+
+        {/* ヒントエリア */}
+        <div className="hint-container">
+          <img src="/ヒント.svg" alt="ヒントアイコン" className="hint-icon" />
+          <img src="/ヒント吹き出し.svg" alt="ヒント吹き出し" className="hint-bubble" />
+          <p className="hint-text">{hintText}</p>
+        </div>
+      </div>
     </div>
   );
 }

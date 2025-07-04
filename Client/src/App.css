@@ -121,13 +121,13 @@
 }
 .stage-3 .timer-display {
   position: relative; /* 本来の位置から微調整 */
-  left: -1px;         
+  left: -40px;         
   top: -30px;          
   font-size: 4.0em; 
 }
 .stage-3 .round-display {
   position: relative; /* 本来の位置から微調整 */
-  left: -32px;        /* 例：左に10px */
+  left: -90px;        /* 例：左に10px */
   top: -30px;           /* 例：下に5px */
   margin-right: 15px;
   text-align: center;
@@ -174,4 +174,17 @@
   right: 10%;
   padding: 15px 30px;
   font-size: 1.2em;
+}
+
+.animation-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.3); /* 半透明の背景（任意） */
+  z-index: 100; /* 最前面に表示 */
 }
