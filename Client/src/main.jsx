@@ -14,5 +14,5 @@ ReactDOM.createRoot(document.getElementById('root')).render(
         {/* 必要に応じて、NotFoundページやエラーページも追加 */}
       </Routes>
     </Router>
-  </React.StrictMode>,
+  </React.StrictMode>
 );
