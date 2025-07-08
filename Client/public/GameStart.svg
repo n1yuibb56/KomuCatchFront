@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="_レイヤー_2" data-name="レイヤー 2" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 977 386">
+  <defs>
+    <style>
+      .cls-1, .cls-2 {
+        fill: none;
+      }
+
+      .cls-3 {
+        fill: #0487d2;
+      }
+
+      .cls-4 {
+        fill: #fff;
+      }
+
+      .cls-2 {
+        filter: url(#drop-shadow-1);
+        stroke: #0487d2;
+        stroke-miterlimit: 10;
+        stroke-width: 11.17px;
+      }
+
+      .cls-5 {
+        clip-path: url(#clippath);
+      }
+    </style>
+    <clipPath id="clippath">
+      <rect class="cls-1" x="61.74" y="61.63" width="853.09" height="262.11" rx="122.17" ry="122.17"/>
+    </clipPath>
+    <filter id="drop-shadow-1" x="0" y="0" width="977" height="386" filterUnits="userSpaceOnUse">
+      <feOffset dx="0" dy="0"/>
+      <feGaussianBlur result="blur" stdDeviation="16.76"/>
+      <feFlood flood-color="#000" flood-opacity=".8"/>
+      <feComposite in2="blur" operator="in"/>
+      <feComposite in="SourceGraphic"/>
+    </filter>
+  </defs>
+  <g id="Startボタン">
+    <g>
+      <g>
+        <rect class="cls-3" x="61.74" y="61.63" width="853.09" height="262.11" rx="122.17" ry="122.17"/>
+        <g class="cls-5">
+          <rect class="cls-2" x="61.74" y="61.63" width="853.09" height="262.11" rx="65.95" ry="65.95"/>
+        </g>
+      </g>
+      <g>
+        <path class="cls-4" d="M221.65,152.73h38.52v7.32h7.32v7.44h7.44v30.96h-7.44v7.44h-7.32v7.44h-29.64v37.2h-8.88v-97.8ZM258.85,204.57v-7.44h7.44v-28.32h-7.44v-7.44h-28.32v43.2h28.32Z"/>
+        <path class="cls-4" d="M299.05,160.05h8.76v90.48h-8.76v-90.48Z"/>
+        <path class="cls-4" d="M336.85,219.45h7.56v-7.44h29.64v-21h-28.32v14.88h-8.88v-16.08h7.56v-7.44h30.96v7.44h7.32v51.84h7.44v8.88h-8.64v-7.56h-13.56v7.56h-23.52v-7.56h-7.56v-23.52ZM366.61,241.65v-7.32h7.44v-13.56h-28.32v20.88h20.88Z"/>
+        <path class="cls-4" d="M431.17,249.09v-13.56h-7.32v-14.76h-7.44v-22.32h-7.56v-16.08h8.88v14.76h7.32v22.32h7.44v14.88h6.12v-14.88h7.44v-22.32h7.44v-14.76h8.64v16.08h-7.44v22.32h-7.32v14.76h-7.44v15h-7.44v7.44h-23.64v-8.88h22.32Z"/>
+        <path class="cls-4" d="M528.85,152.73h38.52v7.32h7.32v7.44h7.44v23.52h-7.44v7.44h-7.32v6.12h7.32v7.44h7.44v23.52h-7.44v7.44h-7.32v7.56h-38.52v-97.8ZM566.05,197.13v-7.32h7.44v-21h-7.44v-7.44h-28.32v35.76h28.32ZM566.05,241.65v-7.32h7.44v-21h-7.44v-7.44h-28.32v35.76h28.32Z"/>
+        <path class="cls-4" d="M605.65,219.45h7.56v-7.44h29.64v-21h-28.32v14.88h-8.88v-16.08h7.56v-7.44h30.96v7.44h7.32v51.84h7.44v8.88h-8.64v-7.56h-13.56v7.56h-23.52v-7.56h-7.56v-23.52ZM635.41,241.65v-7.32h7.44v-13.56h-28.32v20.88h20.88Z"/>
+        <path class="cls-4" d="M680.65,160.05h8.76v90.48h-8.76v-90.48Z"/>
+        <path class="cls-4" d="M723.85,160.05h8.76v90.48h-8.76v-90.48Z"/>
+      </g>
+    </g>
+  </g>
+</svg>

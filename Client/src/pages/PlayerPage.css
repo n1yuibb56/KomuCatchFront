@@ -1,0 +1,166 @@
+/* src/pages/PlayerPage.css */
+
+/* ページ全体のコンテナ */
+.player-page-container {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* ゲーム画面のメインコンテナ */
+.player-game-screen {
+  position: relative;
+  width: 100%;
+  max-width: 450px;
+  height: 100%;
+  max-height: 900px;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-around;
+  padding: 20px;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+/* 上部のボタンの親コンテナ */
+.main-action-buttons {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+/* 「質問に答える」ボタンのスタイル */
+.answer-button {
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+  width: 230px;
+}
+
+.answer-button img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* 「気になる」ボタンのスタイル */
+.curious-button {
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+  width: 420px;
+}
+
+.curious-button img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* リアクションエリア */
+.reaction-area {
+  position: relative;
+  bottom: 0px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  bottom: 200px;
+}
+
+/* ★★★ ここからリアクションラインのスタイルを変更 ★★★ */
+.reaction-line-container {
+  width: 500px;
+  line-height: 0;
+}
+
+.reaction-line-container img {
+  width: 100%;
+  height: auto;
+}
+
+.reaction-buttons {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  width: 100%;
+}
+
+.reaction-buttons button {
+  background: transparent;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+
+.reaction-laugh {
+  width: 100px;
+  height: 100px;
+}
+.reaction-surprise {
+  width: 85px;
+  height: 85px;
+}
+.reaction-angry {
+  width: 85px;
+  height: 85px;
+}
+.reaction-like {
+  width: 100px;
+  height: 100px;
+}
+
+/* ヒントエリア */
+.hint-container {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  width: 120px;
+  height: 120px;
+}
+
+.hint-icon,
+.hint-bubble,
+.hint-text {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+}
+
+.hint-icon {
+  position: absolute;
+  bottom: 25px;
+  right: 85px;
+  width: 70px;
+}
+
+.hint-bubble {
+  width: 220px;
+  bottom: 130px;
+  right: 10px;
+}
+
+.hint-text {
+  width: 170px;
+  right: 25%;
+  bottom: 145px;
+  font-size: 1.4em;
+  font-weight: bold;
+  text-align: center;
+  color: #2a2929;
+}

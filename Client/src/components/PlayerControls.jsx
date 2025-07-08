@@ -5,7 +5,7 @@ function PlayerControls({ onAction }) {
     <div className="player-controls">
       {/* 画面遷移図上部の「質問を投げる」ボタン */}
       <button onClick={() => onAction('ans_question')} className="action-button question-button">
-        質問に答える
+        回答する
       </button>
 
       {/* 画面遷移図中央の「気になるボタン」に対応するスペース（または別の機能） */}

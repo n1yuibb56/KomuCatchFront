@@ -1,67 +1,79 @@
-import React, { useState, useEffect } from 'react';
-import SpeechRecognition, { useSpeechRecognition } from 'react-speech-recognition';
-import { useDeviceMotion } from '../../hooks/useDeviceMotion';
-import './VoiceMotionPopup.css';
+import React, { useState, useEffect } from "react";
+import SpeechRecognition, {
+  useSpeechRecognition,
+} from "react-speech-recognition";
+import { useDeviceMotion } from "../../hooks/useDeviceMotion";
+import "./VoiceMotionPopup.css";
 
 const VoiceMotionPopup = ({ handleSend }) => {
- // 'idle': 待機中, 'recording': 録音中, 'recognized': 認識完了, 'motion_detecting': モーション検出中
-  const [mode, setMode] = useState('idle');
-  const [recognizedText, setRecognizedText] = useState('');
+  const [mode, setMode] = useState("idle");
+  const [recognizedText, setRecognizedText] = useState("");
+  const [debugHunllerFlg, setDebugHunllerFlg] = useState(false);
 
   const {
     transcript,
     listening,
     resetTranscript,
-    browserSupportsSpeechRecognition
+    browserSupportsSpeechRecognition,
   } = useSpeechRecognition();
+
+  const useThrow = true;
 
   const {
     motionType,
     requestPermissionAndStart,
     status: motionHookStatus,
     motionStatus,
-    stopMotionDetection
-  } = useDeviceMotion();
+    stopMotionDetection,
+  } = useDeviceMotion(useThrow);
 
-  // 'throw' モーションを検出したらコンソールに出力
   useEffect(() => {
-    if (motionType === 'throw') {
+    if (motionType === "throw") {
       stopMotionDetection();
-      setMode('end');
+      setMode("end");
     }
-  }, [motionType]);
+    if (debugHunllerFlg) {
+      setDebugHunllerFlg(false);
+      stopMotionDetection();
+      setMode("end");
+    }
+  }, [motionType, debugHunllerFlg]);
 
-  // listeningフラグ(録音状態)を監視し、録音が終了したら自動でモードを切り替える
   useEffect(() => {
-    if (mode === 'recording' && !listening && transcript) {
+    if (mode === "recording" && !listening && transcript) {
       setRecognizedText(transcript);
-      setMode('recognized');
+      setMode("recognized");
     }
   }, [listening, transcript, mode]);
 
+  useEffect(() => {
+    // modeが 'end' で、かつ送信するテキストが存在する場合に実行
+    if (mode === "end" && recognizedText) {
+      handleSend("ask_question", recognizedText);
+    }
+  }, [mode, recognizedText, handleSend]);
 
-  // 各ボタンのクリックイベントハンドラ
+
   const handleStartRecording = () => {
-    setRecognizedText('');
+    setRecognizedText("");
     resetTranscript();
     SpeechRecognition.startListening({ continuous: false });
-    setMode('recording');
+    setMode("recording");
   };
 
   const handleStopRecording = () => {
     SpeechRecognition.stopListening();
-    // listeningフラグの変更はuseEffectで検知され、モードが切り替わります
   };
 
   const handleStartMotionDetection = () => {
     requestPermissionAndStart();
-    setMode('motion_detecting');
+    setMode("motion_detecting");
   };
 
   const resetAll = () => {
     resetTranscript();
-    setRecognizedText('');
-    setMode('idle');
+    setRecognizedText("");
+    setMode("idle");
   };
 
   if (!browserSupportsSpeechRecognition) {
@@ -74,59 +86,65 @@ const VoiceMotionPopup = ({ handleSend }) => {
     );
   }
 
-  // 現在のステータスを表示するテキスト
   const getStatusText = () => {
     switch (mode) {
-      case 'recording':
+      case "recording":
         return `認識中: ${transcript}`;
-      case 'recognized':
-        return `質問内容: ${recognizedText || '（何も聞き取れませんでした）'}`;
-      case 'motion_detecting':
+      case "recognized":
+        return `質問内容: ${recognizedText || "（何も聞き取れませんでした）"}`;
+      case "motion_detecting":
         return `センサー: ${motionHookStatus} | モーション: ${motionStatus}`;
-      case 'end':
-        console.log(`質問内容: ${recognizedText}`);
-        
-        handleSend("ask_question",recognizedText );
-        return `質問が投げられました！`
-      case 'idle':
+      case "end":
+        return `質問が投げられました！`;
+      case "idle":
       default:
-        return '録音開始ボタンを押してください';
+        return "録音開始ボタンを押してください";
     }
   };
 
   return (
     <div className="popup-box">
-      <div className="box">
-        <h2>音声・モーション入力</h2>
-        
-        <div className="status-display">
-          <p>{getStatusText()}</p>
-        </div>
+      <div className="box-img">
+        <div className="content">
+          <div className="status-display">
+            <p>{getStatusText()}</p>
+          </div>
 
-        <div className="button-container">
-          {mode === 'idle' && (
-            <button onClick={handleStartRecording} className="main-button">
-              録音開始
-            </button>
-          )}
-          {mode === 'recording' && (
-            <button onClick={handleStopRecording} className="main-button stop-button">
-              録音停止
-            </button>
-          )}
-          {mode === 'recognized' && (
-            <button onClick={handleStartMotionDetection} className="main-button motion-button">
-              モーション検出開始
-            </button>
-          )}
-          {mode === 'motion_detecting' && (
-             <p>デバイスを動かしてください...</p>
-          )}
-        </div>
+          <div className="button-container">
+            {mode === "idle" && (
+              <button
+                onClick={handleStartRecording}
+                className="main-button"
+              ></button>
+            )}
+            {mode === "recording" && (
+              <button
+                onClick={handleStopRecording}
+                className="main-button stop-button"
+              ></button>
+            )}
+            {mode === "recognized" && (
+              <button
+                onClick={handleStartMotionDetection}
+                className="main-button motion-button"
+              ></button>
+            )}
+            {mode === "motion_detecting" && (
+              <>
+                <p>デバイスを動かしてください...</p>
+                <button
+                  onClick={() => {
+                    setDebugHunllerFlg(true);
+                  }}
+                >
+                  Debug : OnNext Button
+                </button>
+              </>
+            )}
+          </div>
 
-        <button onClick={resetAll} className="reset-button">
-          リセット
-        </button>
+          <button onClick={resetAll} className="reset-button"></button>
+        </div>
       </div>
     </div>
   );

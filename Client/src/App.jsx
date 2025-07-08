@@ -1,140 +1,169 @@
 import React, { useState, useEffect } from "react";
+import PlayerCard from "./components/PlayerCard"; // PlayerCardコンポーネントをインポート
 
 // Socket.io
 import io from "socket.io-client";
-import { serverURL } from "./config/serverConfig";
+// ★★★ サーバーのURLをあなたの環境に合わせて設定してください ★★★
+import { URL } from "./ServerURL";
+const serverURL = URL; // 例: "https://your-server.ngrok.io"
 const socket = io(serverURL, {
   extraHeaders: {
-    "ngrok-skip-browser-warning": "true", // ngrokの警告ページをスキップするためのヘッダー
+    "ngrok-skip-browser-warning": "true", // ngrokの警告ページをスキップ
   },
 });
 
-// プレイヤー参加用QR
-// const FRONTEND_BASE_URL = 'http://localhost:5173'; // QRコード画像で固定URLを使用するため不要になる可能性
-// ★追加: 固定QRコード画像のパス
-// publicフォルダ直下にqr_code.pngを置くことを想定
-const STATIC_QR_CODE_IMAGE_PATH = "/QRCode.png";
-
-// 他components
-import GamePlaying from "./components/GamePlaying";
-// import VoiceMotionPopup from './components/Player/PopUp/VoiceMotionPopup';
+// 画像パスの定義 (publicフォルダからの相対パス)
+const BACKGROUND_IMAGE_PATH = "/PC_background.svg";
+const QR_CODE_IMAGE_PATH = "/QRCode(16).png"; // 以前のQR.pngから変更
+const BEST_QUESTION_IMAGE_PATH = "/Best.svg";
+const GAME_START_IMAGE_PATH = "/GameStart.svg";
+const REPLAY_IMAGE_PATH = "/Replay.svg";
+// アニメーションファイルへのパスを定義
+const animationFiles = ["","/lought.webm","/驚き.webm","/怒り.webm","/いいね.webm"]
 
 // CSS
 import "./App.css";
 
 function App() {
-  const [hostId, setHostId] = useState(null); // ゲームセッション管理のため、hostIdはバックエンドから取得し続ける
-  const [players, setPlayers] = useState([]);
+  // --- State Management ---
+  // currentStage: 1=QR待機, 2=ゲーム開始ボタン, 3=ゲーム中, 4=結果表示
+  const [currentStage, setCurrentStage] = useState(1);
+  const [hostId, setHostId] = useState(null);
+  const [players, setPlayers] = useState([]); // {id, name, score} の配列
   const [playerReactions, setPlayerReactions] = useState({});
-  const [gameState, setGameState] = useState("waiting");
-  const [currentRound, setCurrentRound] = useState(0);
+  const [currentRound, setCurrentRound] = useState(1);
   const [timer, setTimer] = useState(0);
+  const [nowQuestion, setNowQuestion] = useState(""); // 現在の質問
   const [isLoading, setIsLoading] = useState(true);
-  const [isGameOver, setIsGameOver] = useState(false);
-  const [nowQuestion, setNowQuestion] = useState(""); // 現在の質問内容
+  const [scores, setScores] = useState([]);
+  const [playerRank, SetPlayerRank] = useState([]);
+  const playerRankings = {
+    1: "/1位.svg",
+    2: "/2位.svg",
+    3: "/3位.svg",
+    4: "/4位.svg",
+  };
+  const [currentAnimation, setCurrentAnimation] = useState(null);
 
+  // --- Socket.IO Event Handlers ---
   useEffect(() => {
+    // 接続成功
+    socket.on("connect", () => {
+      console.log("サーバーに接続しました。 Host ID:", socket.id);
+      setIsLoading(false);
+    });
+
+    // ホストセッション作成完了
     socket.on("hostSessionCreated", (id) => {
       setHostId(id);
-      console.log("Host Session Created:", id);
-      setIsLoading(false);
-      setGameState("waiting");
+      console.log("ホストセッションが作成されました:", id);
+      // 初期状態にリセット
+      setCurrentStage(1);
       setPlayers([]);
       setPlayerReactions({});
       setCurrentRound(0);
       setTimer(0);
-      setIsGameOver(false);
-    });
-
-    socket.on("connect", () => {
-      console.log("Connected to Socket.IO server as host.");
+      setNowQuestion("");
       setIsLoading(false);
     });
 
+    // プレイヤー参加
     socket.on("user joined", (playerData) => {
-      // playerData は Array<{userNumber:1},{userNumber:2}> の形式である
-      // playersは Array<{id: string, name: string, score: number}> の形式である
-      // playerDataをplayersに変換し変換し代入
-      // 例: playerData = [{userNumber: 1}, {userNumber: 2}]
-      // players = [{id: '1', name: 'Player1', score: 0}, {id: '2', name: 'Player2', score: 0}]
-      console.log(
-        "Player Joined:",
-        playerData[playerData.length - 1].userNumber
-      );
-      const newPlayer = {
-        id: playerData[playerData.length - 1].userNumber.toString(),
-        name: `プレイヤー${playerData[playerData.length - 1].userNumber + 1}`,
+      console.log("プレイヤーが参加しました:", playerData);
+      const newPlayers = playerData.map((p) => ({
+        id: p.userNumber.toString(),
+        name: `プレイヤー${p.userNumber + 1}`,
         score: 0,
-      };
-      setPlayers((prevPlayers) => [...prevPlayers, newPlayer]);
-      console.log(`Player Joined: ${newPlayer.name} (ID: ${newPlayer.id})`);
+      }));
+      setPlayers(newPlayers);
+      renderPlayerCards();
     });
 
+    // ゲーム開始
     socket.on("game start", (initialData) => {
-      console.log("Game Started!");
-      setGameState("playing");
-      // setTimer(initialData.timer);
+      console.log("ゲームが開始されました！");
+      setCurrentStage(3); // ゲーム中ステージへ
       // setCurrentRound(initialData.currentRound);
-      setIsGameOver(false);
+      // setTimer(initialData.timer);
     });
 
+    // 新しい質問の受信
     socket.on("new question", (question) => {
-      console.log("New Question Received:", question);
+      console.log("新しい質問:", question.text);
       setNowQuestion(question.text);
     });
 
-    socket.on("gameTimerUpdate", (newTime) => {
-      setTimer(newTime);
-    });
+    // タイマー更新
+    socket.on("timer_update", (data) => {
+      if (!data.isAnswerTimeActive) setTimer(data.timeLeft);
+      else {setTimer(data.ansTimer);}
+      
 
-    socket.on("roundFinished", (nextRoundData) => {
-      console.log(`Round Finished! Next Round: ${nextRoundData.nextRound}`);
-      if (nextRoundData.nextRound > 3) {
-        console.log("All rounds finished. Game Over.");
-        setIsGameOver(true);
-      } else {
-        setTimer(nextRoundData.timer);
-        setCurrentRound(nextRoundData.nextRound);
-        setIsGameOver(false);
+      if (data.players) {
+        setPlayers((prevPlayers) =>
+          prevPlayers.map((player) => {
+            const updatedInfo = data.players.find(
+              (p) => p.userNumber === parseInt(player.id)
+            );
+
+            return updatedInfo
+              ? { ...player, score: updatedInfo.score }
+              : player;
+          })
+        );
       }
     });
 
-    socket.on("gameFinished", () => {
-      console.log("Game Finished from server! (explicit)");
-      setIsGameOver(true);
+    // ラウンド終了
+    socket.on("roundFinished", (nowRoundCount) => {
+      setCurrentRound(nowRoundCount);
     });
 
+    // ゲーム終了
+    socket.on("game finished", () => {
+      setCurrentStage(4); // 結果表示ステージへ
+    });
+
+    // スコア更新
     socket.on("playerScoresUpdate", (updatedPlayers) => {
       setPlayers(updatedPlayers);
     });
 
+    // プレイヤーのリアクション
     socket.on("playerReaction", ({ playerId, reactionType }) => {
-      console.log(`Player ${playerId} reacted with: ${reactionType}`);
-      setPlayerReactions((prev) => ({
-        ...prev,
-        [playerId]: reactionType,
-      }));
-      setPlayers((prevPlayers) =>
-        prevPlayers.map((p) =>
-          p.id === playerId ? { ...p, lastReaction: reactionType } : p
-        )
-      );
+      console.log(`プレイヤー ${playerId} がリアクション: ${reactionType}`);
+      setPlayerReactions((prev) => ({ ...prev, [playerId]: reactionType }));
     });
 
+    // プレイヤー退出
     socket.on("playerLeft", ({ playerId }) => {
-      console.log(`Player ${playerId} left.`);
-      setPlayers((prevPlayers) => prevPlayers.filter((p) => p.id !== playerId));
-      setPlayerReactions((prev) => {
-        const newReactions = { ...prev };
-        delete newReactions[playerId];
-        return newReactions;
-      });
+      console.log(`プレイヤー ${playerId} が退出しました。`);
+      setPlayers((prev) => prev.filter((p) => p.id !== playerId));
     });
 
+    socket.on('show_reaction', (data) => {
+      if (animationFiles[data.reaction + 1]) {
+        setCurrentAnimation(data.reaction + 1);
+      }
+    });
+
+    socket.on("game reset", () => {});
+
+    socket.on("time extended", () => {});
+
+    socket.on("update player list", (playerList) => {
+      console.log(playerList);
+
+      setPlayers(playerList);
+    });
+
+    // クリーンアップ関数
     return () => {
+      socket.off("connect");
       socket.off("hostSessionCreated");
-      socket.off("playerJoined");
-      socket.off("gameStarted");
+      socket.off("user joined");
+      socket.off("game start");
+      socket.off("new question");
       socket.off("gameTimerUpdate");
       socket.off("roundFinished");
       socket.off("gameFinished");
@@ -144,85 +173,202 @@ function App() {
     };
   }, []);
 
+  useEffect(() => {
+    if (players.length == 4 && currentStage < 2) {
+      setCurrentStage(2);
+    }
+  }, [players]);
+
+  // --- Event Handlers ---
+  // ゲーム開始ボタン（待機画面 -> 開始確認画面）
   const handleStartGame = () => {
-    socket.emit("startGame", hostId);
+    if (players.length > 0) {
+      setCurrentStage(2); // Play Ball!画面へ
+    } else {
+      alert("プレイヤーが1人以上参加するまで開始できません。");
+    }
   };
 
+  // Play Ball!ボタン（開始確認画面 -> ゲーム中）
   const handlePlayBall = () => {
-    console.log("Host clicked Play Ball!");
-    socket.emit("hostPlayBall", hostId);
+    console.log("ホストがPlay Ballをクリックしました！");
+    socket.emit("startGame"); // サーバーにゲーム開始を通知
   };
 
+  // もう一度遊ぶボタン
   const handlePlayAgain = () => {
-    console.log("Host clicked Play Again. Requesting session reset...");
+    console.log("もう一度遊ぶ... セッションのリセットを要求します。");
     socket.emit("resetSessionAndCreateNewHost", hostId);
   };
 
-  return (
-    <div className="app-container">
-      <h1>キャッチボールアプリ</h1>
-      <>
-        {/* 1枚目の画面: ホスト待機・プレイヤー募集 */}
-        {gameState === "waiting" && (
-          <>
-            {/* ホストIDの存在はバックエンド通信のためにチェックするが、QRコード表示は画像に置き換え */}
-            <>
-              <p>プレイヤーは以下のQRコードをスキャンして参加してください。</p>
-              <div
-                style={{
-                  background: "white",
-                  padding: "16px",
-                  margin: "20px auto",
-                  width: "fit-content",
-                }}
-              >
-                {/* ★QRコードコンポーネントを削除し、imgタグに変更 */}
-                <img
-                  src={STATIC_QR_CODE_IMAGE_PATH}
-                  alt="Player Join QR Code"
-                  style={{ width: 256, height: 256 }}
-                />
-              </div>
-              {/* 固定URLの直接入力ガイドは不要になる場合が多いが、残すことも可能 */}
-              {/* <p>または、このURLを直接入力してください:</p>
-                  <p><strong>{FRONTEND_BASE_URL}/player?hostId=<固定ID></strong></p> */}
+  const handleAnimationEnd = () => {
+    setCurrentAnimation(null);
+  };
 
-              <h2>参加中のプレイヤー ({players.length}人):</h2>
-              {players.length > 0 ? (
-                <ul>
-                  {players.map((player) => (
-                    <li key={player.id}>
-                      {player.name || `プレイヤー${player.id}`}
-                    </li>
-                  ))}
-                </ul>
-              ) : (
-                <p>まだプレイヤーが参加していません。</p>
-              )}
+  // --- Rendering Logic ---
+  // プレイヤーカードのレンダリング
+  // renderPlayerCards 関数内
+  const renderPlayerCards = () => {
+    var rankedPlayers = [...players].sort((a, b) => b.score - a.score);
+    const playerRankings = {
+      0: "/1位.svg",
+      1: "/2位.svg",
+      2: "/3位.svg",
+      3: "/4位.svg",
+    };
 
-              <button onClick={handleStartGame} disabled={players.length < 1}>
-                この人数で開始
-              </button>
-            </>
-          </>
-        )}
+    const cardData = Array(4)
+      .fill(null)
+      .map((_, index) => {
+        const player = players[index];
+        if (!player) return { playerNumber: index + 1, isEmpty: true };
 
-        {/* 2枚目の画面: ゲームプレイ中（兼ゲーム終了表示） */}
-        {gameState === "playing" && (
-          <>
-            <GamePlaying
-              timer={timer}
-              currentRound={currentRound}
-              players={players}
-              playerReactions={playerReactions}
-              onPlayBall={handlePlayBall}
-              isGameOver={isGameOver}
-              onPlayAgain={handlePlayAgain}
+        // player.id を直接比較 (元の `+ 1` は不要と思われます)
+        const rankIndex = rankedPlayers.findIndex((p) => p.id === player.id);
+
+        return {
+          playerNumber: index + 1,
+          score: currentStage >= 3 ? player.score : undefined,
+          rankImage:
+            currentStage == 4 && rankIndex !== -1
+              ? playerRankings[rankIndex]
+              : null,
+          reaction: playerReactions[player.id],
+          isEmpty: false,
+        };
+      });
+
+    return cardData.map((data, i) => (
+      <PlayerCard
+        key={i}
+        playerNumber={data.playerNumber}
+        score={data.score} // cardDataからscoreを渡す
+        rankImage={data.rankImage}
+        reaction={data.reaction}
+        isEmpty={data.isEmpty}
+        className={`player-${i + 1}`}
+      />
+    ));
+  };
+
+  // 各ステージのコンテンツをレンダリングする関数
+  const renderCurrentStageContent = () => {
+    if (isLoading) {
+      return <p className="message-text">サーバーに接続中...</p>;
+    }
+
+    switch (currentStage) {
+      case 1: // QRコードとプレイヤー募集
+        return (
+          <div className="stage-content stage-1">
+            <p className="message-text">
+              キャッチボール相手を探しています...({players.length}/4)
+            </p>
+            <img
+              src={QR_CODE_IMAGE_PATH}
+              alt="参加用QRコード"
+              className="qr-code"
             />
-            <p>{nowQuestion}</p>
-          </>
-        )}
-      </>
+            <button
+              onClick={handleStartGame}
+              className="next-button"
+              disabled={players.length < 1}
+            >
+              この人数で開始
+            </button>
+          </div>
+        );
+      case 2: // Play Ball!ボタン
+        return (
+          <div className="stage-content stage-2">
+            <button onClick={handlePlayBall} className="play-ball-button">
+              <img
+                src={GAME_START_IMAGE_PATH}
+                alt="Play Ball!"
+                className="play-ball-image"
+              />
+            </button>
+          </div>
+        );
+      case 3: // ゲームプレイ中
+        const minutes = String(Math.floor(timer / 60)).padStart(2, "0");
+        const seconds = String(timer % 60).padStart(2, "0");
+        return (
+          <div className="stage-content stage-3">
+            <p className="question-text">
+              {nowQuestion || "質問を待っています..."}
+            </p>
+            <div className="bottom-right-container">
+              <div className="timer-container">
+                <div className="round-display">
+                  <div>Round</div>
+                  <div>{String(currentRound).padStart(2, "0")}</div>
+                </div>
+                <span className="timer-display">
+                  {minutes}:{seconds}
+                </span>
+              </div>
+            </div>
+          </div>
+        );
+      case 4: // 結果表示
+        return (
+          <div className="stage-content stage-4">
+            <div className="best-question-container">
+              <img
+                src={BEST_QUESTION_IMAGE_PATH}
+                alt="ベストクエスチョン"
+                className="best-question-image"
+              />
+              <p className="best-question-text">
+                {nowQuestion || "お疲れ様でした！"}
+              </p>
+            </div>
+            <button onClick={handlePlayAgain} className="restart-button">
+              <img
+                src={REPLAY_IMAGE_PATH}
+                alt="もう一度遊ぶ"
+                className="restart-image"
+              />
+            </button>
+          </div>
+        );
+      default:
+        return null;
+    }
+  };
+
+  return (
+    <div
+      className={`app-container stage-is-${currentStage}`}
+      style={{ backgroundImage: `url(${BACKGROUND_IMAGE_PATH})` }}
+    >
+      <button
+        style={{ display: "flex" }}
+        onClick={() => {
+          socket.emit("reset game");
+          window.location.reload();
+        }}
+      >
+        Players Reset
+      </button>
+      {currentAnimation && (
+        <div className="animation-overlay">
+          <video
+            key={currentAnimation}
+            width="600"
+            height="400"
+            autoPlay
+            muted
+            playsInline
+            onEnded={handleAnimationEnd}
+          >
+            <source src={animationFiles[currentAnimation]} type="video/webm" />
+          </video>
+        </div>
+      )}
+      <div className="player-card-layout">{renderPlayerCards()}</div>
+      <div className="main-content">{renderCurrentStageContent()}</div>
     </div>
   );
 }

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="_レイヤー_2" data-name="レイヤー 2" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 937 1335">
+  <defs>
+    <style>
+      .cls-1, .cls-2 {
+        fill: none;
+      }
+
+      .cls-3 {
+        fill: #0487d2;
+        filter: url(#drop-shadow-1);
+        stroke: #fff;
+        stroke-width: 5px;
+      }
+
+      .cls-3, .cls-2 {
+        stroke-miterlimit: 10;
+      }
+
+      .cls-4 {
+        fill: #006faf;
+      }
+
+      .cls-2 {
+        filter: url(#drop-shadow-2);
+        stroke: #006faf;
+        stroke-width: 9.11px;
+      }
+
+      .cls-5 {
+        clip-path: url(#clippath);
+      }
+    </style>
+    <filter id="drop-shadow-1" x="0" y="0" width="937" height="1335" filterUnits="userSpaceOnUse">
+      <feOffset dx="0" dy="0"/>
+      <feGaussianBlur result="blur" stdDeviation="23.15"/>
+      <feFlood flood-color="#000" flood-opacity="1"/>
+      <feComposite in2="blur" operator="in"/>
+      <feComposite in="SourceGraphic"/>
+    </filter>
+    <clipPath id="clippath">
+      <rect class="cls-1" x="127.58" y="346.19" width="681.75" height="462.33" rx="202.32" ry="202.32"/>
+    </clipPath>
+    <filter id="drop-shadow-2" x="50.11" y="268.11" width="837" height="619" filterUnits="userSpaceOnUse">
+      <feOffset dx="0" dy="0"/>
+      <feGaussianBlur result="blur-2" stdDeviation="22.78"/>
+      <feFlood flood-color="#000" flood-opacity="1"/>
+      <feComposite in2="blur-2" operator="in"/>
+      <feComposite in="SourceGraphic"/>
+    </filter>
+  </defs>
+  <g id="_質問入力" data-name="質問入力">
+    <g>
+      <rect class="cls-3" x="69.85" y="69.57" width="797.21" height="1195.25" rx="202.32" ry="202.32"/>
+      <g>
+        <rect class="cls-4" x="127.58" y="346.19" width="681.75" height="462.33" rx="202.32" ry="202.32"/>
+        <g class="cls-5">
+          <rect class="cls-2" x="127.58" y="346.19" width="681.75" height="462.33" rx="202.32" ry="202.32"/>
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>

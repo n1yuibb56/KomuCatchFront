@@ -11,25 +11,25 @@
   z-index: 100;
 }
 
-.box {
+.box-img {
   position: relative;
-  width: 80%;
-  max-width: 500px;
-  margin: 0 auto;
-  min-height: 300px;
-  background: #fff;
   border-radius: 12px;
-  padding: 20px;
-  border: 1px solid #999;
-  overflow: auto;
-  text-align: center;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+
+  background-image: url("../../../assets/PopUp/question.svg");
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  height: 560px;
+  width: 400px;
+  border-radius: 15px;
+  text-align: center;
+  animation: fadeInZoom 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 .close-icon {
-  content: 'x';
+  content: "x";
   cursor: pointer;
   position: absolute;
   top: 15px;
@@ -39,16 +39,16 @@
   border-radius: 50%;
   line-height: 25px;
   text-align: center;
-  border: 1px solid #ccc;
   font-size: 16px;
 }
 
 .status-display {
-  min-height: 80px;
-  background-color: #f0f0f0;
-  border-radius: 8px;
-  padding: 10px;
-  margin: 15px 0;
+  width: 290px;
+  height: 200px;
+  margin-top: 150px;
+  font-size: 20px;
+  text-align: center;
+
   display: flex;
   align-items: center;
   justify-content: center;
@@ -56,19 +56,20 @@
 
 .status-display p {
   margin: 0;
+  padding: 0 10px;
   word-break: break-all;
 }
 
 .main-button {
-  padding: 15px 25px;
-  font-size: 1.2em;
-  cursor: pointer;
+  background-image: url("../../../assets/PopUp/recStart.svg");
+  background-size: contain;
+  background-repeat: no-repeat;
+  width: 230px;
+  height: 77px;
+  background-color: #007bff00;
   border: none;
-  background-color: #007bff;
-  color: white;
-  border-radius: 8px;
-  transition: background-color 0.3s;
-  user-select: none; /* テキスト選択を防ぐ */
+  margin: auto;
+  padding: 0;
 }
 
 .main-button:hover {
@@ -76,28 +77,31 @@
 }
 
 .main-button:disabled {
-  background-color: #cccccc;
   cursor: not-allowed;
 }
 
 .reset-button {
+  background-image: url("../../../assets/PopUp/reset.svg");
+  background-color: #007bff00;
+  background-size: contain;
+  background-repeat: no-repeat;
   margin-top: 15px;
-  padding: 8px 15px;
   font-size: 0.9em;
   cursor: pointer;
-  border: 1px solid #ccc;
-  background-color: #f8f9fa;
-  color: #333;
+  border: none;
   border-radius: 5px;
+  width: 150px;
+  height: 48px;
 }
 
-
 .button-container {
+
   min-height: 60px; /* ボタンの有無でレイアウトがガタつくのを防ぐ */
   display: flex;
   justify-content: center;
   align-items: center;
   margin-bottom: 15px;
+  margin-top: 20px;
 }
 
 .main-button {
@@ -105,21 +109,27 @@
   font-size: 1.2em;
   cursor: pointer;
   border: none;
-  color: white;
   border-radius: 8px;
   transition: background-color 0.3s;
   user-select: none;
 }
 
 .main-button.stop-button {
-  background-color: #dc3545; /* 赤色 */
+  background-image: url("../../../assets/PopUp/recStop.svg");
 }
 .main-button.stop-button:hover {
-  background-color: #c82333;
 }
 
 .main-button.motion-button {
-  background-color: #28a745; /* 緑色 */
+  background-image: url("../../../assets/PopUp/motion_button.svg");
+  background-size: contain;
+  background-repeat: no-repeat;
+  width: 290px;
+  height: 77px;
+  background-color: #007bff00;
+  border: none;
+  margin: auto;
+  padding: 0;
 }
 .main-button.motion-button:hover {
   background-color: #218838;
@@ -127,4 +137,12 @@
 
 .reset-button {
   margin-top: 0; /* button-containerにマージンを付けたので調整 */
+}
+
+.content {
+  width: 100%;
+  display: flex;
+  flex-flow: column;
+  justify-content: center;
+  align-items: center;
 }

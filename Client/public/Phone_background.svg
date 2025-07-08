@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="_レイヤー_2" data-name="レイヤー 2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1181.34 2556">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: #ffdf37;
+      }
+
+      .cls-2 {
+        fill: #0487d2;
+      }
+    </style>
+  </defs>
+  <g id="_スマホ_背景" data-name="スマホ_背景">
+    <rect class="cls-2" width="1181.34" height="2556"/>
+    <rect class="cls-1" x="-642.68" y="733.37" width="2466.7" height="1089.27" rx="165.77" ry="165.77" transform="translate(1868.67 687.33) rotate(90)"/>
+    <path class="cls-2" d="M863.59,26.31s16.21,123.37,149.7,122.56c0,0,37.81,97.88,159.97,42.22l-3.6-172.73-306.07,7.95Z"/>
+    <path class="cls-2" d="M15.86,2197.51s151.88-9.8,176.38,132.28c0,0,134.73-32.12,164.13,85.74,0,0,144.53,4.9,146.98,132.28H15.86v-350.31Z"/>
+  </g>
+</svg>

@@ -1,0 +1,42 @@
+/* src/components/PlayerCard.css */
+
+.player-card {
+  position: relative; 
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  pointer-events: auto;
+}
+
+.player-image {
+  width: 500px;
+  height: auto;
+}
+
+.player-score {
+  /* ★★★ この 'top' の値で上下位置を調整します ★★★ */
+  position: relative; /* 位置調整を有効にする */
+  top: -60px;        /* 上からの距離。数値を大きくすると下に、小さくすると上に移動 */
+  
+  font-size: 1.8em;
+  font-weight: bold;
+  z-index: 5;
+}
+
+/* ★ Player3 のスコアだけを調整 ★ */
+.player-card.player-3 .player-score {
+  top: -60px; /* デフォルトより少し下に移動させる */
+}
+
+.player-rank-image {
+  position: absolute;
+  width: 180px;
+  height: auto;
+  
+  right: -10px; 
+  bottom: 140px; 
+  
+  transform: rotate(-20deg);
+  z-index: 10; 
+}

@@ -9,7 +9,7 @@ const CATCH_ACC_THRESHOLD_LOW = 1500;
 const CATCH_ROT_THRESHOLD_HIGH = 1000;
 const HISTORY_LENGTH = 5;
 
-export const useDeviceMotion = () => {
+export const useDeviceMotion = (useThrow) => {
   const [status, setStatus] = useState("待機中...");
   const [motionStatus, setMotionStatus] = useState("モーション検出待ち...");
   const [motionType, setMotionType] = useState(""); // 'catch' | 'throw' | ''
@@ -74,12 +74,12 @@ export const useDeviceMotion = () => {
     const isThrow = speed > THROW_ACC_THRESHOLD_HIGH && rotMagnitude > THROW_ROT_THRESHOLD_LOW;
     const isCatch = speed > CATCH_ACC_THRESHOLD_LOW && rotMagnitude > CATCH_ROT_THRESHOLD_HIGH;
 
-    if (isThrow) {
+    if (isThrow && useThrow) {
       lastMotionTimeRef.current = now;
       setMotionStatus("投げる！");
       setMotionType("throw");
       playSound(throwSoundRef.current);
-    } else if (isCatch) {
+    } else if (isCatch && !useThrow) {
       lastMotionTimeRef.current = now;
       setMotionStatus("キャッチ！");
       setMotionType("catch");

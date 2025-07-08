@@ -2,11 +2,13 @@ import React, { useState, useEffect, useRef } from "react";
 import { useLocation } from "react-router-dom";
 import io from "socket.io-client";
 import PlayerControls from "../components/PlayerControls";
-import { serverURL } from "../config/serverConfig";
+import { URL } from "../ServerURL";
 import VoiceMotionPopup from "../components/Player/PopUp/VoiceMotionPopup";
 import CatchPopupComponent from "../components/Player/PopUp/CatchPopupComponent";
+import "./PlayerPage.css";
+import HintText from "../components/Player/Hint/HintText";
 
-const SOCKET_SERVER_URL = serverURL;
+const SOCKET_SERVER_URL = URL;
 
 function PlayerPage() {
   const location = useLocation();
@@ -89,13 +91,6 @@ function PlayerPage() {
       setBackendMessage(question.text);
     });
 
-    socketInstance.on("timer_update", (data) => {
-      console.log(data);
-      setTimeLeft(data.timeLeft);
-      setAnsTimer(data.ansTimer);
-      console.log("Game State Updated:", data , playerId);
-    });
-
     socketInstance.on("gameTimerUpdate", (newTime) => {
       setCurrentTimer(newTime);
     });
@@ -145,18 +140,37 @@ function PlayerPage() {
         `Questioner decided: Player ${questionerID}. This decision is for player ${playerId}`
       );
 
-      const newRole = questionerID === playerId ? "questioner" : "waiter";
+      const newRole = questionerID + 1 === playerId ? "questioner" : "waiter";
       setPlayerRole(newRole);
       // 正しい方法でロール名をログに出力
       console.log(`Player ${playerId} is assigned role: ${newRole}`);
     };
 
+    socketInstance.on("retry_question", questionerDecidedHandler);
+
     // イベントリスナーを登録
     socketInstance.on("questioner decided", questionerDecidedHandler);
+
+    socketInstance.on("timer_update", (data) => {
+      setTimeLeft(data.timeLeft);
+      setAnsTimer(data.ansTimer);
+
+      data.players.map((player) => {
+        if (player.userNumber + 1 == playerId) setMyScore(player.score);
+      });
+    });
 
     // クリーンアップ関数
     return () => {
       socketInstance.off("questioner decided", questionerDecidedHandler);
+      socketInstance.off("retry_question", questionerDecidedHandler);
+      socketInstance.off("timer_update", (data) => {
+        setTimeLeft(data.timeLeft);
+        setAnsTimer(data.ansTimer);
+        data.players.map((player) => {
+          if (player.userNumber == playerId) setMyScore(player.score);
+        });
+      });
     };
   }, [playerId]);
 
@@ -181,69 +195,102 @@ function PlayerPage() {
           }
         }
         break;
+      case "ans":
+        if (playerRole === "answerer") {
+          setIsAnswering(false);
+          socketRef.current.emit("send answer", msg);
+        }
+        break;
+
+      case "react_laugh":
+        socketRef.current.emit("reaction", 0);
+        break;
+      case "react_surprise":
+        socketRef.current.emit("reaction", 1);
+        break;
+      case "react_angry":
+        socketRef.current.emit("reaction", 2);
+        break;
+      case "react_like":
+        socketRef.current.emit("reaction", 3);
+        break;
     }
   };
 
   const handleAns = () => {
     setIsAnswering(false);
-    socketRef.current.emit("send answer",{userNumber: playerId, answer: "demo-answer"});
-  }
+
+    socketRef.current.emit("send answer", {
+      userNumber: playerId + 1,
+      answer: "demo-answer",
+    });
+  };
 
   const handleExtendGame = () => {
-    if (socketRef.current && isConnected && playerId && gameStarted && hostId) {
-      console.log(`Player ${playerId} requesting extension!`);
-      socketRef.current.emit("extendGameTime", {
-        playerId,
-        hostId: hostId,
-        seconds: 1,
-      });
-    }
+    console.log(`Player ${playerId} requesting extension!`);
+    socketRef.current.emit("clicked");
   };
 
   return (
-    <div className="player-page">
-      <h1>プレイヤー画面</h1>
-      <>
-        <p>回答待ち制限時間：{ansTimer}</p>
-        <p>深掘りタイム：{timeLeft}</p>
-        <p>ホストID: {hostId || "N/A"}</p>
-        <p>プレイヤーの役割: {playerRole}</p>
-
+    <div className="player-page-container">
+      <div
+        className="player-game-screen"
+        style={{ backgroundImage: `url('/Phone_background.svg')` }}
+      >
         {playerRole == "answerer" && isAnswering ? (
-          <CatchPopupComponent handleSend={handleAns}/>
+          <CatchPopupComponent handleSend={handleAns} question={backendMessage}/>
         ) : null}
 
-        {playerId ? (
-          <div>
-            <p>あなたのプレイヤー番号: {playerId}</p>
-            {gameStarted ? (
-              <>
-                <p>現在の点数: {myScore}</p>
-                <p>現在の順位: {myRank}位</p>
-                <p>残り時間: {currentTimer}秒</p>
-                <PlayerControls onAction={handlePlayerAction} />
-                <div className="backend-message-box">
-                  {backendMessage ? (
-                    <p>{backendMessage}</p>
-                  ) : (
-                    <p>ここにメッセージが表示されます</p>
-                  )}
-                </div>
-                <button onClick={handleExtendGame} className="extend-button">
-                  延長 (+1秒)
-                </button>
-                {playerRole === "questioner" && !isSendQuestion ? (
-                  <VoiceMotionPopup handleSend={handlePlayerAction} />
-                ) : null}
-              </>
-            ) : (
-              <p>ゲーム開始を待っています...</p>
-            )}
+        {playerRole === "questioner" && !isSendQuestion ? (
+          <VoiceMotionPopup handleSend={handlePlayerAction} />
+        ) : null}
+
+        {/* 上部のボタンエリア */}
+        <div className="main-action-buttons">
+          {/* handleActionの呼び出しは変更なし */}
+          <button
+            className="answer-button"
+            onClick={() => handlePlayerAction("ans_question")}
+          >
+            <img src="/Shitumon.svg" alt="質問に答える" />
+          </button>
+          <button className="curious-button" onClick={handleExtendGame}>
+            <img src="/Kininaru.svg" alt="気になるボタン" />
+          </button>
+        </div>
+
+        {/* リアクションエリア */}
+        <div className="reaction-area">
+          <div className="reaction-line-container">
+            <img src="/リアクションライン.svg" alt="リアクションライン" />
           </div>
-        ) : (
-          <p>ホストへの接続中...</p>
-        )}
-      </>
+          <div className="reaction-buttons">
+            <button onClick={() => handlePlayerAction("react_laugh")}>
+              <img src="/爆笑.svg" alt="爆笑" className="reaction-laugh" />
+            </button>
+            <button onClick={() => handlePlayerAction("react_surprise")}>
+              <img src="/驚き.svg" alt="驚き" className="reaction-surprise" />
+            </button>
+            <button onClick={() => handlePlayerAction("react_angry")}>
+              <img src="/怒り.svg" alt="怒り" className="reaction-angry" />
+            </button>
+            <button onClick={() => handlePlayerAction("react_like")}>
+              <img src="/いいね.svg" alt="いいね" className="reaction-like" />
+            </button>
+          </div>
+        </div>
+
+        {/* ヒントエリア */}
+        <div className="hint-container">
+          <img src="/ヒント.svg" alt="ヒントアイコン" className="hint-icon" />
+          <img
+            src="/ヒント吹き出し.svg"
+            alt="ヒント吹き出し"
+            className="hint-bubble"
+          />
+          <p className="hint-text"><HintText /></p>
+        </div>
+      </div>
     </div>
   );
 }
